@@ -4,9 +4,7 @@ from .api import (
     OPEN, HIGH, LOW, CLOSE, VOLUME, VOL,
     ABS, MAX, HHV, LLV,
     REF, IF, SUM, STD,
-    MA, EMA, SMA, # 后面是我定义的
-    # SLOPE,
-    # LINEARREG_SLOPE,
+    MA, EMA, SMA,
 )
 
 
@@ -118,17 +116,9 @@ def VR(M1=26):
     VR容量比率
     """
     LC = REF(CLOSE, 1)
-    TH = SUM(IF(CLOSE > LC, VOL, 0), M1)
-    TL = SUM(IF(CLOSE < LC, VOL, 0), M1)
-    TQ = SUM(IF(CLOSE == LC, VOL, 0), M1)
-    VR = (TH * 2 + TQ) / (TL * 2 + TQ) * 100
+    VR = SUM(IF(CLOSE > LC, VOL, 0), M1) / SUM(IF(CLOSE <= LC, VOL, 0), M1) * 100
 
     return VR
-
-
-def MAVR(N=26, M=6):
-
-    return MA(VR(N), M)
 
 
 def ARBR(M1=26):
@@ -154,16 +144,3 @@ def TRIX(M1=12, M2=20):
     TRMA = MA(TRIX, M2)
 
     return TRIX, TRMA
-
-
-def ATR(N=14):
-    MTR = MAX( MAX((HIGH - LOW), ABS(REF(CLOSE, 1) - HIGH)), ABS(REF(CLOSE, 1) - LOW))
-    ATR = MA(MTR, N)
-
-    return ATR
-
-# todo define slope
-# def ACCER(N):
-#     return SLOPE(CLOSE, N) / REF(CLOSE, 0)
-# ！！！！！！以下的都是我改的
-
