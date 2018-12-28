@@ -5,6 +5,7 @@ from .api import (
     ABS, MAX, HHV, LLV,
     REF, IF, SUM, STD,
     MA, EMA, SMA,
+    AVEDEV,
 )
 
 
@@ -151,3 +152,7 @@ def ATR(N=14):
     ATR = MA(MTR,N)
 
     return ATR
+
+
+def AVEDEV():
+    return AVEDEV

@@ -124,6 +124,41 @@ class AbsSeries(NumericSeries):
         super(AbsSeries, self).__init__(series)
 
 
+# def Ave(series):
+#     """
+#     compute arithmetic mean
+#     :param series: NumericSeries
+#     :return: float
+#     """
+#     if isinstance(series, NumericSeries):
+#         series = series.series
+#         try:
+#             series[series == np.inf] = 0
+#             series[series == -np.inf] = 0
+#         except Exception as e:
+#             raise FormulaException(e)
+#
+#     series_sum = np.sum(series)
+#     series_avg = series_sum / len(series)
+#     return series_avg
+
+
+def AveDev(series):
+    if isinstance(series, NumericSeries):
+        series = series.series
+        try:
+            series[series == np.inf] = 0
+            series[series == -np.inf] = 0
+        except Exception as e:
+            raise FormulaException(e)
+
+    series_avg = np.sum(series) / len(series)
+    series1 = series - series_avg
+    series2 = np.abs(series1)
+    return np.sum(series2)/len(series2)
+
+
+
 @handle_numpy_warning
 def CrossOver(s1, s2):
     """s1金叉s2

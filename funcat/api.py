@@ -19,6 +19,7 @@ from .func import (
     llv,
     Ref,
     iif,
+    AveDev,
 )
 from .context import (
     symbol,
@@ -62,7 +63,7 @@ IF = IIF = iif
 
 S = set_current_security
 T = set_current_date
-
+AVEDEV = AveDev
 
 __all__ = [
     "OPEN", "O",
