@@ -20,10 +20,7 @@ from .time_series import (
 
 
 class OneArgumentSeries(NumericSeries):
-
-    @staticmethod
-    def func(*args, **kwargs):
-        return talib.MA(*args, **kwargs)
+    func = talib.MA
 
     def __init__(self, series, arg):
         if isinstance(series, NumericSeries):
@@ -40,32 +37,21 @@ class OneArgumentSeries(NumericSeries):
 
 class MovingAverageSeries(OneArgumentSeries):
     """http://www.tadoc.org/indicator/MA.htm"""
-
-    @staticmethod
-    def func(*args, **kwargs):
-        return talib.MA(*args, **kwargs)
+    func = talib.MA
 
 
 class WeightedMovingAverageSeries(OneArgumentSeries):
     """http://www.tadoc.org/indicator/WMA.htm"""
-
-    @staticmethod
-    def func(*args, **kwargs):
-        return talib.WMA(*args, **kwargs)
+    func = talib.WMA
 
 
 class ExponentialMovingAverageSeries(OneArgumentSeries):
     """http://www.fmlabs.com/reference/default.htm?url=ExpMA.htm"""
-
-    @staticmethod
-    def func(*args, **kwargs):
-        return talib.EMA(*args, **kwargs)
+    func = talib.EMA
 
 
 class StdSeries(OneArgumentSeries):
-    @staticmethod
-    def func(*args, **kwargs):
-        return talib.STDDEV(*args, **kwargs)
+    func = talib.STDDEV
 
 
 class TwoArgumentSeries(NumericSeries):
@@ -144,6 +130,11 @@ def CrossOver(s1, s2):
 
 def Ref(s1, n):
     return s1[n]
+
+
+# todo define slope
+def slope(s1, n):
+    return float(Ref(s1, 0) - Ref(s1, n)) / n
 
 
 @handle_numpy_warning
