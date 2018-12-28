@@ -144,3 +144,10 @@ def TRIX(M1=12, M2=20):
     TRMA = MA(TRIX, M2)
 
     return TRIX, TRMA
+
+
+def ATR(N=14):
+    MTR = MAX(MAX((HIGH - LOW), ABS(REF(CLOSE, 1) - HIGH)), ABS(REF(CLOSE, 1) - LOW))
+    ATR = MA(MTR,N)
+
+    return ATR
