@@ -154,5 +154,6 @@ def ATR(N=14):
     return ATR
 
 
-def AVEDEV():
-    return AVEDEV
+# def AVEDEV():
+#     AVEDEV = AVEDEV(CLOSE)
+#     return AVEDEV
