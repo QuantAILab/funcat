@@ -124,11 +124,25 @@ class AbsSeries(NumericSeries):
         super(AbsSeries, self).__init__(series)
 
 
-# class MeanSeries(NumericSeries):
-#     def __init__(self, series):
-#         temp_sum = SumSeries(series.series)
-
-
+class AveDevSeries(NumericSeries):
+    def __init__(self, series, period):
+        result_series = MovingAverageSeries(series, period)  # used to store the result
+        if isinstance(series, NumericSeries):
+            series = series.series
+            try:
+                series[series == np.inf] = 0
+                series[series == -np.inf] = 0
+                temp_len = len(series)
+                for i in np.arange(period - 1, temp_len):
+                    temp_start = i - period + 1
+                    temp_series = series[temp_start:i]
+                    temp_avg = np.mean(temp_series)
+                    temp_dev = temp_series - temp_avg
+                    result_series[i] = np.sum(np.abs(temp_dev))
+            except Exception as e:
+                raise FormulaException(e)
+        super(NumericSeries, self).__init__(series)
+        self.extra_create_kwargs["period"] = period
 
 
 @handle_numpy_warning

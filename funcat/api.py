@@ -19,6 +19,7 @@ from .func import (
     llv,
     Ref,
     iif,
+    AveDevSeries,
     # AveDev,
 )
 from .context import (
@@ -64,6 +65,7 @@ IF = IIF = iif
 S = set_current_security
 T = set_current_date
 # AVEDEV = AveDev
+AVEDEV = AveDevSeries
 
 __all__ = [
     "OPEN", "O",
@@ -102,4 +104,5 @@ __all__ = [
     "set_start_date",
     "set_data_backend",
     "set_current_freq",
+    "AVEDEV",
 ]
