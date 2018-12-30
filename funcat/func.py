@@ -141,7 +141,7 @@ class AveDevSeries(NumericSeries):
                     result_series[i] = np.mean(np.abs(temp_dev))
             except Exception as e:
                 raise FormulaException(e)
-        super(AveDevSeries, self).__init__(series)
+        super(AveDevSeries, self).__init__(result_series)
         self.extra_create_kwargs["period"] = period
 
 
