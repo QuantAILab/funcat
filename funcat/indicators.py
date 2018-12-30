@@ -149,11 +149,13 @@ def TRIX(M1=12, M2=20):
 
 def ATR(N=14):
     MTR = MAX(MAX((HIGH - LOW), ABS(REF(CLOSE, 1) - HIGH)), ABS(REF(CLOSE, 1) - LOW))
-    ATR = MA(MTR,N)
+    ATR = MA(MTR, N)
 
     return ATR
 
 
-def myAVEDEV(N=26):
-    return AVEDEV(CLOSE, N)
+def CCI(N=14):
+    TYP = (HIGH + LOW + CLOSE) / 3
+    CCI = (TYP - MA(TYP, N)) / (0.015 * AVEDEV(TYP, N))
 
+    return CCI
