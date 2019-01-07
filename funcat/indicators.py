@@ -6,6 +6,7 @@ from .api import (
     REF, IF, SUM, STD,
     MA, EMA, SMA,
     AVEDEV,
+    COUNT,
 )
 
 
@@ -159,3 +160,9 @@ def CCI(N=14):
     CCI = (TYP - MA(TYP, N)) / (0.015 * AVEDEV(TYP, N))
 
     return CCI
+
+def PSY(N=12, M=6):
+    PSY = COUNT(CLOSE > REF(CLOSE, 1), N) / N * 100
+    PSYMA = MA(PSY, M)
+
+    return PSYMA
