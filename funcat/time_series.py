@@ -221,13 +221,14 @@ class NumericSeries(TimeSeries):
 
 
 class DuplicateNumericSeries(NumericSeries):
-    # FIXME size should come from other series
     def __init__(self, series, size=640000):
         try:
             val = series[-1]
+            new_size = len(series)
         except:
             val = series
-        super(DuplicateNumericSeries, self).__init__(np.full(size, val, dtype=np.float64))
+            new_size = size
+        super(DuplicateNumericSeries, self).__init__(np.full(new_size, val, dtype=np.float64))
 
 
 class MarketDataSeries(NumericSeries):
