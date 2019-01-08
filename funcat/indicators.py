@@ -8,6 +8,7 @@ from .api import (
     AVEDEV,
     COUNT,
     MIN,
+    AMOUNT,
 )
 
 
@@ -183,3 +184,9 @@ def XS(N=13):
     LUP = EMA(VAR4 * 1.14, 5)
     LDN = EMA(VAR4 * 0.86, 5)
     return SUP, SDN, LUP, LDN
+
+def CYR(M=5, N=13):
+    DIVE = 0.01 * EMA(AMOUNT, N) / EMA(VOL, N)
+    CYR = (DIVE / REF(DIVE, 1) - 1) * 100
+    MACYR = MA(CYR, M)
+    return  MACYR

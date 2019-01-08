@@ -34,7 +34,7 @@ from .helper import select
 
 
 # create open high low close volume datetime
-for name in ["open", "high", "low", "close", "volume", "datetime"]:
+for name in ["open", "high", "low", "close", "volume", "datetime", "total_turnover"]:
     dtype = np.float64 if name != "datetime" else np.uint64
     cls = type("{}Series".format(name.capitalize()), (MarketDataSeries, ), {"name": name, "dtype": dtype})
     obj = cls(dynamic_update=True)
@@ -42,6 +42,7 @@ for name in ["open", "high", "low", "close", "volume", "datetime"]:
         globals()[var] = obj
 
 VOL = VOLUME
+AMOUNT = TOTAL_TURNOVER
 
 MA = MovingAverageSeries
 WMA = WeightedMovingAverageSeries
