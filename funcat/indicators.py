@@ -166,3 +166,8 @@ def PSY(N=12, M=6):
     PSYMA = MA(PSY, M)
 
     return PSYMA
+
+def EXPMA(M1=12, M2=50):
+    EXP1 = EMA(CLOSE, M1)
+    EXP2 = EMA(CLOSE, M2)
+    return EXP1, EXP2
