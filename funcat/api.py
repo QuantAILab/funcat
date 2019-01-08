@@ -31,7 +31,7 @@ from .context import (
     set_current_freq,
 )
 from .helper import select
-
+from numpy import sqrt
 
 # create open high low close volume datetime
 for name in ["open", "high", "low", "close", "volume", "datetime", "total_turnover"]:
@@ -43,6 +43,7 @@ for name in ["open", "high", "low", "close", "volume", "datetime", "total_turnov
 
 VOL = VOLUME
 AMOUNT = TOTAL_TURNOVER
+SQRT = sqrt
 
 MA = MovingAverageSeries
 WMA = WeightedMovingAverageSeries
@@ -65,7 +66,6 @@ IF = IIF = iif
 
 S = set_current_security
 T = set_current_date
-# AVEDEV = AveDev
 AVEDEV = AveDevSeries
 
 __all__ = [
@@ -106,4 +106,6 @@ __all__ = [
     "set_data_backend",
     "set_current_freq",
     "AVEDEV",
+    "AMOUNT",
+    "SQRT"
 ]

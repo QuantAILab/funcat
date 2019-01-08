@@ -9,6 +9,7 @@ from .api import (
     COUNT,
     MIN,
     AMOUNT,
+    SQRT
 )
 
 
@@ -198,3 +199,7 @@ def CYW():
     VAR4 = IF(HIGH > LOW, (VAR1 / VAR2 + VAR3 / VAR2) * VOL, 0)
     CYW = SUM(VAR4, 10) / 10000
     return CYW
+
+def HSIV(N=60):
+    HSIV = STD(CLOSE,N)*SQRT(250)*100.0
+    return HSIV
