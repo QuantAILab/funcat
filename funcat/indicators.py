@@ -190,3 +190,11 @@ def CYR(M=5, N=13):
     CYR = (DIVE / REF(DIVE, 1) - 1) * 100
     MACYR = MA(CYR, M)
     return  MACYR
+
+def CYW():
+    VAR1 = CLOSE - LOW
+    VAR2 = HIGH - LOW
+    VAR3 = CLOSE - HIGH
+    VAR4 = IF(HIGH > LOW, (VAR1 / VAR2 + VAR3 / VAR2) * VOL, 0)
+    CYW = SUM(VAR4, 10) / 10000
+    return CYW
