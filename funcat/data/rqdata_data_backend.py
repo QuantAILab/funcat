@@ -24,11 +24,11 @@ class RQDataBackend(DataBackend):
         return t
 
     @lru_cache(4096)
-    def get_price(self, order_book_id, start, end, freq):
+    def get_price(self, order_book_id, start, end, freq, **kwargs):
         start = get_str_date_from_int(start)
         end = get_str_date_from_int(end)
 
-        df = self.rqdatac.get_price(order_book_id, start_date=start, end_date=end, frequency=freq)
+        df = self.rqdatac.get_price(order_book_id, start_date=start, end_date=end, frequency=freq, **kwargs)
         suspended_df = self.rqdatac.is_suspended(order_book_id, start_date=start, end_date=end)
 
         if suspended_df is None:

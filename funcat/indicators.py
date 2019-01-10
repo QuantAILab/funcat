@@ -9,7 +9,9 @@ from .api import (
     COUNT,
     MIN,
     AMOUNT,
-    SQRT
+    SQRT,
+    ADVANCE,
+    DECLINE,  # Todo define these two
 )
 
 
@@ -47,11 +49,11 @@ def MACD(SHORT=12, LONG=26, M=9):
     """
     MACD 指数平滑移动平均线
     """
-    DIFF = EMA(CLOSE, SHORT) - EMA(CLOSE, LONG)
-    DEA = EMA(DIFF, M)
-    MACD = (DIFF - DEA) * 2
+    DIF = EMA(CLOSE, SHORT) - EMA(CLOSE, LONG)
+    DEA = EMA(DIF, M)
+    MACD = (DIF - DEA) * 2
 
-    return MACD
+    return DIF, DEA, MACD
 
 
 def RSI(N1=6, N2=12, N3=24):
@@ -200,6 +202,11 @@ def CYW():
     CYW = SUM(VAR4, 10) / 10000
     return CYW
 
-def HSIV(N=60):
+def HISV(N=60):
     HSIV = STD(CLOSE,N)*SQRT(250)*100.0
     return HSIV
+
+
+def ARMS(N=21, INDEX='000300.XSHG'):
+    ARMS = EMA(ADVANCE / DECLINE, N)
+    return ARMS
