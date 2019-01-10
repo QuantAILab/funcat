@@ -35,39 +35,39 @@ def get_bars(freq):
     return bars
 
 
-def compare_with_prev(df, greater=True, close_col=0, date_col='date', output_col=1):
-    """
-    compare with prev_close, if higher than prev_close, return True, else False
-    :param df:
-    :param greater: if True, return whether temporary close is greater than previous trading day's close
-    :param close_col: column name of close
-    :param date_col: column name of previous date
-    :param output_col: column name of the output
-    :return: np.ndarray
-    """
-    df[output_col] = None
-    df_grouped = df.groupby(df[date_col])
-    group_keys = list(df_grouped.groups.keys())
-    result = pd.DataFrame()
-    for i in np.arange(1, len(group_keys)):
-        key = group_keys[i]
-        temp_df = df_grouped.get_group(key)
-        prev_close = list(df_grouped.get_group(group_keys[i - 1])[close_col])[-1]
-        if greater:
-            # Todo mute the warning by using wrapper
-            temp_df[output_col] = temp_df[close_col] > prev_close
-        else:
-            temp_df[output_col] = temp_df[close_col] < prev_close
-        result = result.append(temp_df)
-    result.dropna(axis='index', inplace=True)
-    return np.array(result[output_col])
+# def compare_with_prev(df, greater=True, close_col=0, date_col='date', output_col=1):
+#     """
+#     compare with prev_close, if higher than prev_close, return True, else False
+#     :param df:
+#     :param greater: if True, return whether temporary close is greater than previous trading day's close
+#     :param close_col: column name of close
+#     :param date_col: column name of previous date
+#     :param output_col: column name of the output
+#     :return: np.ndarray
+#     """
+#     df[output_col] = None
+#     df_grouped = df.groupby(df[date_col])
+#     group_keys = list(df_grouped.groups.keys())
+#     result = pd.DataFrame()
+#     for i in np.arange(1, len(group_keys)):
+#         key = group_keys[i]
+#         temp_df = df_grouped.get_group(key)
+#         prev_close = list(df_grouped.get_group(group_keys[i - 1])[close_col])[-1]
+#         if greater:
+#             # Todo mute the warning by using wrapper
+#             temp_df[output_col] = temp_df[close_col] > prev_close
+#         else:
+#             temp_df[output_col] = temp_df[close_col] < prev_close
+#         result = result.append(temp_df)
+#     result.dropna(axis='index', inplace=True)
+#     return np.array(result[output_col])
 
 
 def get_markets(freq):
     data_backend = ExecutionContext.get_data_backend()
     current_date = ExecutionContext.get_current_date()
     # Todo: let user define order_book_id
-    order_book_ids = index_components('000300.XSHG')[:10]
+    order_book_ids = index_components('000300.XSHG')
     start_date = ExecutionContext.get_start_date()
     start_date = get_previous_trading_date(str(start_date)[:4] + str(start_date)[4:6] + str(start_date)[6:])
     start_date = int(str(start_date)[:10].replace('-', ''))
@@ -76,14 +76,10 @@ def get_markets(freq):
     decline_list = []
     for order_book_id in order_book_ids:
         try:
-            order_book_bar = data_backend.get_price(order_book_id, start=start_date, end=current_date,
-                                                    freq=freq, fields=['datetime', 'close'])
-            order_book_close = pd.DataFrame(order_book_bar['close'])
-            order_date = list(map(lambda x: str(x)[:8], order_book_bar['datetime']))
-            order_book_close['date'] = order_date
-
-            advance_list.append(compare_with_prev(order_book_close))
-            decline_list.append(compare_with_prev(order_book_close, False))
+            order_book_close = data_backend.get_price(order_book_id, start=start_date, end=current_date,
+                                                    freq='1d', fields=['close'])['close']
+            advance_list.append(order_book_close[1:] > order_book_close[:-1])
+            decline_list.append(order_book_close[1:] < order_book_close[:-1])
         except KeyError:
             continue
 
@@ -91,7 +87,7 @@ def get_markets(freq):
     decline_array = np.vstack(decline_list).sum(axis=0)
 
     datetime_array = data_backend.get_price('000300.XSHG', start=start_date, end=current_date,
-                                            freq=freq, fields=['datetime'])['datetime']
+                                            freq='1d', fields=['datetime'])['datetime']
     markets = np.array(list(zip(datetime_array, advance_array, decline_array)),
                        dtype=[('datetime', np.uint64), ('advance', float), ('decline', float)])
 
