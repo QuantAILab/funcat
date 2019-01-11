@@ -10,7 +10,7 @@ from .utils import wrap_formula_exc, FormulaException
 from .context import ExecutionContext
 from rqalpha_mod_ricequant_data.api_extension import index_components
 from rqalpha.api import get_previous_trading_date
-import pandas as pd
+from operator import itemgetter
 
 
 def get_bars(freq):
@@ -35,57 +35,49 @@ def get_bars(freq):
     return bars
 
 
-def compare_with_prev(df, greater=True, close_col=0, date_col='date', output_col=1):
+def __compare_with_prev(data_backend, order_book_id, start_date, end_date, freq, greater=True):
     """
     compare with prev_close, if higher than prev_close, return True, else False
-    :param df:
     :param greater: if True, return whether temporary close is greater than previous trading day's close
-    :param close_col: column name of close
     :param date_col: column name of previous date
     :param output_col: column name of the output
     :return: np.ndarray
     """
-    df[output_col] = None
-    df_grouped = df.groupby(df[date_col])
-    group_keys = list(df_grouped.groups.keys())
-    result = pd.DataFrame()
-    for i in np.arange(1, len(group_keys)):
-        key = group_keys[i]
-        temp_df = df_grouped.get_group(key)
-        prev_close = list(df_grouped.get_group(group_keys[i - 1])[close_col])[-1]
-        if greater:
-            # Todo mute the warning by using wrapper
-            temp_df[output_col] = temp_df[close_col] > prev_close
-        else:
-            temp_df[output_col] = temp_df[close_col] < prev_close
-        result = result.append(temp_df)
-    result.dropna(axis='index', inplace=True)
-    return np.array(result[output_col])
+    order_book_bar = data_backend.get_price(order_book_id, start=start_date, end=end_date,
+                                            freq=freq, fields=['datetime', 'close'])
+    order_dates = list(map(lambda x: str(x)[:8], order_book_bar['datetime']))
+    order_book_bar1 = order_book_bar.copy()
+    order_book_bar1['datetime'] = order_dates
+    dates = set(order_dates)
+    prev_dates = list(map(get_previous_trading_date, dates))
+    daily_close = list(
+        map(lambda x: data_backend.get_price(order_book_id, start=str(x)[:10], end=str(x)[:10],
+                                             freq='1d', fields=['close'])[0][0], prev_dates))
+    prev_close_dict = dict(zip(dates, daily_close))
+
+    if greater:
+        # Todo mute the warning by using wrapper
+        return order_book_bar1['close'] > itemgetter(*order_dates)(prev_close_dict)
+    else:
+        return order_book_bar1['close'] < itemgetter(*order_dates)(prev_close_dict)
 
 
 def get_markets(freq):
     data_backend = ExecutionContext.get_data_backend()
     current_date = ExecutionContext.get_current_date()
     # Todo: let user define order_book_id
-    order_book_ids = index_components('000300.XSHG')[:10]
+    order_book_ids = index_components('000300.XSHG')
     start_date = ExecutionContext.get_start_date()
-    start_date = get_previous_trading_date(str(start_date)[:4] + str(start_date)[4:6] + str(start_date)[6:])
-    start_date = int(str(start_date)[:10].replace('-', ''))
 
-    advance_list = []
-    decline_list = []
-    for order_book_id in order_book_ids:
-        try:
-            order_book_bar = data_backend.get_price(order_book_id, start=start_date, end=current_date,
-                                                    freq=freq, fields=['datetime', 'close'])
-            order_book_close = pd.DataFrame(order_book_bar['close'])
-            order_date = list(map(lambda x: str(x)[:8], order_book_bar['datetime']))
-            order_book_close['date'] = order_date
-
-            advance_list.append(compare_with_prev(order_book_close))
-            decline_list.append(compare_with_prev(order_book_close, False))
-        except KeyError:
-            continue
+    advance_list = list(map(lambda x: __compare_with_prev(data_backend, x, start_date, current_date, freq),
+                            order_book_ids))
+    decline_list = list(map(lambda x: __compare_with_prev(data_backend, x, start_date, current_date, freq, False),
+                            order_book_ids))
+    # advance_list = []
+    # decline_list = []
+    # for order_book_id in order_book_ids:
+    #     advance_list.append(__compare_with_prev(data_backend, order_book_id, start_date, current_date, freq))
+    #     decline_list.append(__compare_with_prev(data_backend, order_book_id, start_date, current_date, freq, False))
 
     advance_array = np.vstack(advance_list).sum(axis=0)
     decline_array = np.vstack(decline_list).sum(axis=0)
