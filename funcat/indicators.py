@@ -262,3 +262,36 @@ def ABI(M=10):
     return ABI, MAABI
 
 
+def MCL(N1=19, N2=39):
+    DIF = ADVANCE - DECLINE
+    EMA1 = EMA(DIF, N1)
+    EMA2 = EMA(DIF, N2)
+    MCL = EMA1 - EMA2
+    MAMCL1 = EMA1
+    MAMCL2 = EMA2
+
+    return MCL, MAMCL1, MAMCL2
+
+
+def MIKE(N=10):
+    HLC = REF(MA((HIGH + LOW + CLOSE) / 3, N), 1)
+    HV = EMA(HHV(HIGH, N), 3)
+    LV = EMA(LLV(LOW, N), 3)
+    STOR = EMA(2 * HV - LV, 3)
+    MIDR = EMA(HLC + HV - LV, 3)
+    WEKR = EMA(HLC * 2 - LV, 3)
+    WEKS = EMA(HLC * 2 - HV, 3)
+    MIDS = EMA(HLC - HV + LV, 3)
+    STOS = EMA(2 * LV - HV, 3)
+
+    return STOR, MIDR, WEKR, WEKS, MIDS, STOS
+
+
+def VOL(M1=5, M2=10):
+    MAVOL1 = MA(VOL, M1)
+    MAVOL2 = MA(VOL, M2)
+
+    return MAVOL1, MAVOL2
+
+
+
