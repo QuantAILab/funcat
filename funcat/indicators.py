@@ -11,7 +11,9 @@ from .api import (
     AMOUNT,
     SQRT,
     ADVANCE,
-    DECLINE,  # Todo define these two
+    DECLINE,
+    CAPITAL,
+    DMA,
 )
 
 
@@ -128,14 +130,14 @@ def VR(M1=26):
     return VR
 
 
-def ARBR(M1=26):
+def BRAR(N=26):
     """
     ARBR人气意愿指标
     """
-    AR = SUM(HIGH - OPEN, M1) / SUM(OPEN - LOW, M1) * 100
-    BR = SUM(MAX(0, HIGH - REF(CLOSE, 1)), M1) / SUM(MAX(0, REF(CLOSE, 1) - LOW), M1) * 100
+    BR = SUM(MAX(0, HIGH - REF(CLOSE, 1)), N) / SUM(MAX(0, REF(CLOSE, 1) - LOW), N) * 100
+    AR = SUM(HIGH - OPEN, N) / SUM(OPEN - LOW, N) * 100
 
-    return AR, BR
+    return BR, AR
 
 
 def DPO(M1=20, M2=10, M3=6):
@@ -206,7 +208,11 @@ def HISV(N=60):
     HSIV = STD(CLOSE,N)*SQRT(250)*100.0
     return HSIV
 
-
 def ARMS(N=21, INDEX='000300.XSHG'):
     ARMS = EMA(ADVANCE / DECLINE, N)
     return ARMS
+
+def FSL():
+    SWL = (EMA(CLOSE, 5) * 7 + EMA(CLOSE, 10) * 3) / 10
+    SWS = DMA(EMA(CLOSE, 12), MAX(1, 100 * (SUM(VOL, 5) / (3 * CAPITAL))))
+    return SWL, SWS

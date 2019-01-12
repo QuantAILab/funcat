@@ -145,6 +145,26 @@ class AveDevSeries(NumericSeries):
         self.extra_create_kwargs["period"] = period
 
 
+class DmaSeries(NumericSeries):
+    def __init__(self, series, weights):
+        if isinstance(series, NumericSeries):
+            series = series.series
+            try:
+                series_mean = np.nanmean(series)
+                series[series == np.inf] = series_mean
+                series[series == -np.inf] = series_mean
+                series[np.isnan(series)] = series_mean
+                weights_mean = np.nanmean(weights._series)
+                weights._series[np.isnan(weights._series)] = weights_mean
+            except Exception as e:
+                raise FormulaException(e)
+        result_series = series  # used to store the result
+        for i in range(1, len(series)):
+            result_series[i] = (1 - weights._series[i]) * result_series[i - 1] + weights._series[i] * result_series[i]
+
+        super(DmaSeries, self).__init__(result_series)
+
+
 @handle_numpy_warning
 def CrossOver(s1, s2):
     """s1金叉s2

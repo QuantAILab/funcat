@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-from .time_series import MarketDataSeries, MarketSeries
+from .time_series import MarketDataSeries, MarketSeries, FinancialDataSeries
 from .func import (
     SumSeries,
     AbsSeries,
@@ -20,6 +20,7 @@ from .func import (
     Ref,
     iif,
     AveDevSeries,
+    DmaSeries,
 )
 from .context import (
     symbol,
@@ -44,6 +45,14 @@ for name in ["open", "high", "low", "close", "volume", "datetime", "total_turnov
 for name in ["advance", "decline"]:
     dtype = np.float64
     cls = type("{}Series".format(name.capitalize()), (MarketSeries, ), {"name": name, "dtype": dtype})
+    obj = cls(dynamic_update=True)
+    for var in [name[0], name[0].upper(), name.upper()]:
+        globals()[var] = obj
+
+# define classes to get financial data
+for name in ["capital"]:
+    dtype = np.float64
+    cls = type("{}Series".format(name.capitalize()), (FinancialDataSeries, ), {"name": name, "dtype": dtype})
     obj = cls(dynamic_update=True)
     for var in [name[0], name[0].upper(), name.upper()]:
         globals()[var] = obj
@@ -74,6 +83,7 @@ IF = IIF = iif
 S = set_current_security
 T = set_current_date
 AVEDEV = AveDevSeries
+DMA = DmaSeries
 
 __all__ = [
     "OPEN", "O",
@@ -84,6 +94,7 @@ __all__ = [
     "DATETIME",
     "ADVANCE",
     "DECLINE",
+    "CAPITAL",
 
     "SMA",
     "MA",
@@ -116,5 +127,6 @@ __all__ = [
     "set_current_freq",
     "AVEDEV",
     "AMOUNT",
-    "SQRT"
+    "SQRT",
+    "DMA"
 ]

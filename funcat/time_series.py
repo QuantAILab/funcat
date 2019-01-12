@@ -11,7 +11,8 @@ from .context import ExecutionContext
 from rqalpha_mod_ricequant_data.api_extension import index_components
 from rqalpha.api import get_previous_trading_date
 from operator import itemgetter
-
+from rqdatac import get_shares
+# from funcat.utils import get_date_from_int, get_int_date
 
 def get_bars(freq):
     data_backend = ExecutionContext.get_data_backend()
@@ -35,6 +36,30 @@ def get_bars(freq):
     return bars
 
 
+def get_financial_data(freq):
+    data_backend = ExecutionContext.get_data_backend()
+    current_date = ExecutionContext.get_current_date()
+    order_book_id = ExecutionContext.get_current_security()
+    start_date = ExecutionContext.get_start_date()
+
+    datetime_array = data_backend.get_price(order_book_id, start=start_date, end=current_date,
+                                            freq=freq, fields=['datetime'])['datetime']
+
+    try:
+        order_dates = list(map(lambda x: str(x)[:8], datetime_array))
+        dates = set(order_dates)
+        prev_dates = list(map(get_previous_trading_date, dates))
+        prev_dates_dict = dict(zip(dates, prev_dates))
+        order_previous_dates = itemgetter(*order_dates)(prev_dates_dict)
+        financial_data = get_shares(order_book_id, min(prev_dates), max(prev_dates), 'circulation_a')
+        circulation_stock = itemgetter(*order_previous_dates)(financial_data)
+        circulation_stock = np.array(list(circulation_stock), dtype=[('capital', float)])
+    except KeyError:
+        return np.array([])
+
+    return circulation_stock
+    
+
 def __compare_with_prev(data_backend, order_book_id, start_date, end_date, freq, greater=True):
     """
     compare with prev_close, if higher than prev_close, return True, else False
@@ -56,7 +81,6 @@ def __compare_with_prev(data_backend, order_book_id, start_date, end_date, freq,
     prev_close_dict = dict(zip(dates, daily_close))
 
     if greater:
-        # Todo mute the warning by using wrapper
         return order_book_bar1['close'] > itemgetter(*order_dates)(prev_close_dict)
     else:
         return order_book_bar1['close'] < itemgetter(*order_dates)(prev_close_dict)
@@ -73,11 +97,6 @@ def get_markets(freq):
                             order_book_ids))
     decline_list = list(map(lambda x: __compare_with_prev(data_backend, x, start_date, current_date, freq, False),
                             order_book_ids))
-    # advance_list = []
-    # decline_list = []
-    # for order_book_id in order_book_ids:
-    #     advance_list.append(__compare_with_prev(data_backend, order_book_id, start_date, current_date, freq))
-    #     decline_list.append(__compare_with_prev(data_backend, order_book_id, start_date, current_date, freq, False))
 
     advance_array = np.vstack(advance_list).sum(axis=0)
     decline_array = np.vstack(decline_list).sum(axis=0)
@@ -399,6 +418,37 @@ class MarketSeries(NumericSeries):
         self._ensure_series_update()
         return super(MarketSeries, self).series
 
+    @property
+    def dtype(self):
+        raise NotImplementedError
+
+    @property
+    def name(self):
+        raise NotImplementedError
+
+
+class FinancialDataSeries(NumericSeries):
+
+    def __init__(self, series=None, dynamic_update=False, freq=None):
+        super(FinancialDataSeries, self).__init__(series)
+        self._dynamic_update = dynamic_update
+        self._freq = freq
+
+    def _ensure_series_update(self):
+        if self._dynamic_update:
+            # TODO: cache
+            freq = self._freq if self._freq is not None else ExecutionContext.get_current_freq()
+            bars = get_financial_data(freq)
+            if len(bars) > 0:
+                self._series = bars[self.name].astype(self.dtype)
+            else:
+                self._series = bars
+                
+    @property
+    def series(self):
+        self._ensure_series_update()
+        return super(FinancialDataSeries, self).series
+    
     @property
     def dtype(self):
         raise NotImplementedError
