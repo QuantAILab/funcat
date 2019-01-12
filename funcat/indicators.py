@@ -209,7 +209,7 @@ def CYW():
     return CYW
 
 def HISV(N=60):
-    HSIV = STD(CLOSE,N)*SQRT(250)*100.0
+    HSIV = STD(CLOSE, N) * SQRT(250) * 100.0
 
     return HSIV
 
@@ -253,5 +253,12 @@ def AMV(M1=5, M2=13, M3=34, M4=60):
     AMV4 = SUM(AMOV, M4) / SUM(VOL, M4)
 
     return AMV1, AMV2, AMV3, AMV4
+
+
+def ABI(M=10):
+    ABI = 100 * ABS(ADVANCE - DECLINE) / (ADVANCE + DECLINE)
+    MAABI = EMA(ABI, M)
+
+    return ABI, MAABI
 
 
