@@ -132,7 +132,7 @@ def VR(M1=26):
 
 def BRAR(N=26):
     """
-    ARBR人气意愿指标
+    BRAR人气意愿指标
     """
     BR = SUM(MAX(0, HIGH - REF(CLOSE, 1)), N) / SUM(MAX(0, REF(CLOSE, 1) - LOW), N) * 100
     AR = SUM(HIGH - OPEN, N) / SUM(OPEN - LOW, N) * 100
@@ -177,6 +177,7 @@ def PSY(N=12, M=6):
 def EXPMA(M1=12, M2=50):
     EXP1 = EMA(CLOSE, M1)
     EXP2 = EMA(CLOSE, M2)
+
     return EXP1, EXP2
 
 def XS(N=13):
@@ -188,12 +189,14 @@ def XS(N=13):
     VAR4 = EMA(CLOSE, 9)
     LUP = EMA(VAR4 * 1.14, 5)
     LDN = EMA(VAR4 * 0.86, 5)
+
     return SUP, SDN, LUP, LDN
 
 def CYR(M=5, N=13):
     DIVE = 0.01 * EMA(AMOUNT, N) / EMA(VOL, N)
     CYR = (DIVE / REF(DIVE, 1) - 1) * 100
     MACYR = MA(CYR, M)
+
     return  MACYR
 
 def CYW():
@@ -202,17 +205,42 @@ def CYW():
     VAR3 = CLOSE - HIGH
     VAR4 = IF(HIGH > LOW, (VAR1 / VAR2 + VAR3 / VAR2) * VOL, 0)
     CYW = SUM(VAR4, 10) / 10000
+
     return CYW
 
 def HISV(N=60):
     HSIV = STD(CLOSE,N)*SQRT(250)*100.0
+
     return HSIV
 
 def ARMS(N=21, INDEX='000300.XSHG'):
     ARMS = EMA(ADVANCE / DECLINE, N)
+
     return ARMS
 
 def FSL():
     SWL = (EMA(CLOSE, 5) * 7 + EMA(CLOSE, 10) * 3) / 10
     SWS = DMA(EMA(CLOSE, 12), MAX(1, 100 * (SUM(VOL, 5) / (3 * CAPITAL))))
+
     return SWL, SWS
+
+
+def HMA(M1=6, M2=12, M3=30, M4=72, M5=144):
+    HMA1 = MA(HIGH, M1)
+    HMA2 = MA(HIGH, M2)
+    HMA3 = MA(HIGH, M3)
+    HMA4 = MA(HIGH, M4)
+    HMA5 = MA(HIGH, M5)
+
+    return HMA1, HMA2, HMA3, HMA4, HMA5
+
+
+def LMA(M1=6, M2=12, M3=30, M4=72, M5=144):
+    LMA1 = MA(LOW, M1)
+    LMA2 = MA(LOW, M2)
+    LMA3 = MA(LOW, M3)
+    LMA4 = MA(LOW, M4)
+    LMA5 = MA(LOW, M5)
+
+    return LMA1, LMA2, LMA3, LMA4, LMA5
+
