@@ -244,3 +244,14 @@ def LMA(M1=6, M2=12, M3=30, M4=72, M5=144):
 
     return LMA1, LMA2, LMA3, LMA4, LMA5
 
+
+def AMV(M1=5, M2=13, M3=34, M4=60):
+    AMOV = VOL * (OPEN + CLOSE) / 2
+    AMV1 = SUM(AMOV, M1) / SUM(VOL, M1)
+    AMV2 = SUM(AMOV, M2) / SUM(VOL, M2)
+    AMV3 = SUM(AMOV, M3) / SUM(VOL, M3)
+    AMV4 = SUM(AMOV, M4) / SUM(VOL, M4)
+
+    return AMV1, AMV2, AMV3, AMV4
+
+
