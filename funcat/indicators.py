@@ -300,19 +300,14 @@ def ROC(N=12, M=6):
 
     return ROC, MAROC
 
-def CYS():
-    CYC13 = EMA(AMOUNT, 13) / EMA(VOL, 13)
-    CYS = (CLOSE - CYC13) / CYC13 * 100
+def ZLMM():
+    LC = REF(CLOSE, 1)
+    RSI2 = SMA(MAX(CLOSE - LC, 0), 12, 1) / SMA(ABS(CLOSE - LC), 12, 1) * 100
+    RSI3 = SMA(MAX(CLOSE - LC, 0), 18, 1) / SMA(ABS(CLOSE - LC), 18, 1) * 100
+    MMS = MA(3 * RSI2 - 2 * SMA(MAX(CLOSE - LC, 0), 16, 1) / SMA(ABS(CLOSE - LC), 16, 1) * 100, 3)
+    MMM = EMA(MMS, 8)
+    MML = MA(3 * RSI3 - 2 * SMA(MAX(CLOSE - LC, 0), 12, 1) / SMA(ABS(CLOSE - LC), 12, 1) * 100, 5)
 
-    return CYS
+    return MMS, MMM, MML
 
 
-def ZLJC():
-    VAR1 = (CLOSE + LOW + HIGH) / 3
-    VAR2 = SUM(((VAR1 - REF(LOW, 1)) - (HIGH - VAR1)) * VOL / 100000 / (HIGH - LOW), 0)
-    VAR3 = EMA(VAR2, 1)
-    JCS = VAR3
-    JCM = MA(VAR3, 12)
-    JCL = MA(VAR3, 26)
-
-    return JCS, JCM, JCL
