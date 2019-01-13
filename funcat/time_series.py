@@ -60,6 +60,25 @@ def get_financial_data(freq):
     return circulation_stock
     
 
+def get_index_data(freq):
+    data_backend = ExecutionContext.get_data_backend()
+    order_book_id = ExecutionContext.get_current_security()
+    exchange = data_backend.instruments(order_book_id).exchange  # get the exchange where order_book_id is listed
+    if exchange == 'XSHG':
+        index_id = '000001.XSHG'
+    elif exchange == 'XSHE':
+        index_id = '399001.XSHE'
+    else:
+        return np.array([])
+
+    start_date = ExecutionContext.get_start_date()
+    current_date = ExecutionContext.get_current_date()
+    index_data = data_backend.get_price(index_id, start=start_date, end=current_date, freq=freq)
+    index_data_dtype = [('indexd', np.uint64), ('indexo', float), ('indexh', float), ('indexl', float), ('indexc', float), ('indexv', float), ('indexa', float)]
+    index_data = np.array(index_data, dtype=index_data_dtype)
+    return index_data
+
+
 def __compare_with_prev(data_backend, order_book_id, start_date, end_date, freq, greater=True):
     """
     compare with prev_close, if higher than prev_close, return True, else False
@@ -449,6 +468,37 @@ class FinancialDataSeries(NumericSeries):
         self._ensure_series_update()
         return super(FinancialDataSeries, self).series
     
+    @property
+    def dtype(self):
+        raise NotImplementedError
+
+    @property
+    def name(self):
+        raise NotImplementedError
+
+
+class IndexDataSeries(NumericSeries):
+
+    def __init__(self, series=None, dynamic_update=False, freq=None):
+        super(IndexDataSeries, self).__init__(series)
+        self._dynamic_update = dynamic_update
+        self._freq = freq
+
+    def _ensure_series_update(self):
+        if self._dynamic_update:
+            # TODO: cache
+            freq = self._freq if self._freq is not None else ExecutionContext.get_current_freq()
+            bars = get_index_data(freq)
+            if len(bars) > 0:
+                self._series = bars[self.name].astype(self.dtype)
+            else:
+                self._series = bars
+
+    @property
+    def series(self):
+        self._ensure_series_update()
+        return super(IndexDataSeries, self).series
+
     @property
     def dtype(self):
         raise NotImplementedError

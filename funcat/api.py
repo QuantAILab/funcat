@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-from .time_series import MarketDataSeries, MarketSeries, FinancialDataSeries
+from .time_series import MarketDataSeries, MarketSeries, FinancialDataSeries, IndexDataSeries
 from .func import (
     SumSeries,
     AbsSeries,
@@ -57,6 +57,14 @@ for name in ["capital"]:
     for var in [name[0], name[0].upper(), name.upper()]:
         globals()[var] = obj
 
+# define classes to get index data
+for name in ["indexo", "indexh", "indexl", "indexc", "indexv", "indexa"]:
+    dtype = np.float64
+    cls = type("{}Series".format(name.capitalize()), (IndexDataSeries, ), {"name": name, "dtype": dtype})
+    obj = cls(dynamic_update=True)
+    for var in [name[0], name[0].upper(), name.upper()]:
+        globals()[var] = obj
+
 VOL = VOLUME
 AMOUNT = TOTAL_TURNOVER
 SQRT = sqrt
@@ -95,6 +103,11 @@ __all__ = [
     "ADVANCE",
     "DECLINE",
     "CAPITAL",
+    "INDEXO",
+    "INDEXH",
+    "INDEXL",
+    "INDEXC",
+    "INDEXA",
 
     "SMA",
     "MA",

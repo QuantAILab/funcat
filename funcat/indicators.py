@@ -14,6 +14,11 @@ from .api import (
     DECLINE,
     CAPITAL,
     DMA,
+    INDEXO,
+    INDEXH,
+    INDEXL,
+    INDEXC,
+    INDEXV,
 )
 
 
@@ -310,4 +315,16 @@ def ZLMM():
 
     return MMS, MMM, MML
 
+
+def LB():
+    ZY2 = VOL / INDEXV * 1000
+
+    return ZY2
+
+def XDT(M=5, N=10):
+    QR = CLOSE / INDEXC * 1000
+    MQR1 = MA(QR, M)
+    MQR2 = MA(QR, N)
+
+    return QR, MQR1, MQR2
 
