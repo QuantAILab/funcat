@@ -287,11 +287,29 @@ def MIKE(N=10):
     return STOR, MIDR, WEKR, WEKS, MIDS, STOS
 
 
-def VOL(M1=5, M2=10):
-    MAVOL1 = MA(VOL, M1)
-    MAVOL2 = MA(VOL, M2)
+def CR(N=26):
+    MID = REF(HIGH + LOW, 1) / 2
+    CR = SUM(MAX(0, HIGH - MID), N) / SUM(MAX(0, MID - LOW), N) * 100
 
-    return MAVOL1, MAVOL2
+    return CR
 
+def ASI(N=6):
+    A = ABS(HIGH - REF(CLOSE, 1))
+    B = ABS(LOW - REF(CLOSE, 1)) + 0.00001  # prevent denominator from becoming 0
+    C = ABS(HIGH - REF(LOW, 1))
+    D = ABS(REF(CLOSE, 1) - REF(OPEN, 1)) + 0.00001
+    
+    E = CLOSE - REF(CLOSE, 1)
+    F = CLOSE - OPEN + 0.00001
+    G = REF(CLOSE, 1) - REF(OPEN, 1)
+    X = E + 1.0/(2 * F) + G
 
+    K = MAX(A, B)
+    MAX_ABC = MAX(K, C)
+    R = IF(MAX_ABC == A, A + 1.0/(2 * B) + 1.0/(4 * D), IF(MAX_ABC == B, B + 1.0/(2 * B) + 1.0/(4 * D), C + 1/(4 * D)))
 
+    L = 3
+    SI = 50 * X/R * K/L
+    ASI = MA(SI, N)
+
+    return SI, ASI

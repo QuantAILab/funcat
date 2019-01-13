@@ -104,7 +104,10 @@ class SumSeries(NumericSeries):
             try:
                 series[series == np.inf] = 0
                 series[series == -np.inf] = 0
-                series = talib.SUM(series, period)
+                if period == 0:
+                    series = np.cumsum(series)
+                else:
+                    series = talib.SUM(series, period)
             except Exception as e:
                 raise FormulaException(e)
         super(SumSeries, self).__init__(series)
