@@ -328,3 +328,24 @@ def XDT(M=5, N=10):
 
     return QR, MQR1, MQR2
 
+
+def SMX(N=50):
+    ZY = CLOSE / INDEXC * 2000
+    ZY1 = EMA(ZY, 3)
+    ZY2 = EMA(ZY, 17)
+    ZY3 = EMA(ZY, 34)
+
+    return ZY1, ZY2, ZY3
+
+
+def RAD(D=3, S=30, M=30):
+    SM = (OPEN + HIGH + CLOSE + LOW) / 4
+    SMID = MA(SM, D)
+    IM = (INDEXO + INDEXH + INDEXL + INDEXC) / 4
+    IMID = MA(IM, D)
+    SI1 = (SMID - REF(SMID, 1)) / SMID
+    II = (IMID - REF(IMID, 1)) / IMID
+    RADER1 = SUM((SI1 - II) * 2, S) * 1000
+    RADERMA = SMA(RADER1, M, 1)
+
+    return RADER1, RADERMA
