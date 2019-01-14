@@ -8,11 +8,10 @@ import numpy as np
 
 from .utils import wrap_formula_exc, FormulaException
 from .context import ExecutionContext
-from rqalpha_mod_ricequant_data.api_extension import index_components
-from rqalpha.api import get_previous_trading_date
+# from rqalpha_mod_ricequant_data.api_extension import index_components  # Todo
+from rqalpha.api import get_previous_trading_date  # Todo
 from operator import itemgetter
-from rqdatac import get_shares
-# from funcat.utils import get_date_from_int, get_int_date
+from rqdatac import get_shares  # Todo
 
 def get_bars(freq):
     data_backend = ExecutionContext.get_data_backend()
@@ -109,7 +108,8 @@ def get_markets(freq):
     data_backend = ExecutionContext.get_data_backend()
     current_date = ExecutionContext.get_current_date()
     # Todo: let user define order_book_id
-    order_book_ids = index_components('000300.XSHG')
+    data_backend = ExecutionContext.get_data_backend()
+    order_book_ids = data_backend.get_index_component('000300.XSHG')
     start_date = ExecutionContext.get_start_date()
 
     advance_list = list(map(lambda x: __compare_with_prev(data_backend, x, start_date, current_date, freq),

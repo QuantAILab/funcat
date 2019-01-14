@@ -36,3 +36,11 @@ class DataBackend(object):
         :rtype: str
         """
         raise NotImplementedError
+
+    def get_index_component(self, order_book_id):
+        """
+        获取指数组成成分
+        :param order_book_id: 股票代码
+        :return: list of str
+        """
+        raise NotImplementedError
