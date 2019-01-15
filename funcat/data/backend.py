@@ -44,3 +44,25 @@ class DataBackend(object):
         :return: list of str
         """
         raise NotImplementedError
+
+    def get_previous_trading_date(self, date, n=1):
+        """
+
+        :param date: 需要查询的日期
+        :param n: 提前的天数
+        :return: 查询日期之前的第n个交易日
+        """
+        raise NotImplementedError
+
+    def get_shares(self, order_book_id, start_date, end_date, fields=None):
+        """
+        获取某只股票在一段时间内的流通情况
+        :param order_book_id: 需要查询的资产代码
+        :param start_date: 查询的起始日期
+        :param end_date: 查询的截止日期
+        :param fields: total 总股本；circulation_a 流通A股；management_circulation 已流通高管持股；
+        non_circulation_a 非流通A股合计；total_a A股总股本
+        :return:
+        """
+        raise NotImplementedError
+

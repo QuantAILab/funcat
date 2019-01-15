@@ -8,10 +8,7 @@ import numpy as np
 
 from .utils import wrap_formula_exc, FormulaException
 from .context import ExecutionContext
-# from rqalpha_mod_ricequant_data.api_extension import index_components  # Todo
-from rqalpha.api import get_previous_trading_date  # Todo
 from operator import itemgetter
-from rqdatac import get_shares  # Todo
 
 def get_bars(freq):
     data_backend = ExecutionContext.get_data_backend()
@@ -47,10 +44,10 @@ def get_financial_data(freq):
     try:
         order_dates = list(map(lambda x: str(x)[:8], datetime_array))
         dates = set(order_dates)
-        prev_dates = list(map(get_previous_trading_date, dates))
+        prev_dates = list(map(data_backend.get_previous_trading_date, dates))
         prev_dates_dict = dict(zip(dates, prev_dates))
         order_previous_dates = itemgetter(*order_dates)(prev_dates_dict)
-        financial_data = get_shares(order_book_id, min(prev_dates), max(prev_dates), 'circulation_a')
+        financial_data = data_backend.get_shares(order_book_id, min(prev_dates), max(prev_dates), 'circulation_a')
         circulation_stock = itemgetter(*order_previous_dates)(financial_data)
         circulation_stock = np.array(list(circulation_stock), dtype=[('capital', float)])
     except KeyError:
@@ -92,7 +89,7 @@ def __compare_with_prev(data_backend, order_book_id, start_date, end_date, freq,
     order_book_bar1 = order_book_bar.copy()
     order_book_bar1['datetime'] = order_dates
     dates = set(order_dates)
-    prev_dates = list(map(get_previous_trading_date, dates))
+    prev_dates = list(map(data_backend.get_previous_trading_date, dates))
     daily_close = list(
         map(lambda x: data_backend.get_price(order_book_id, start=str(x)[:10], end=str(x)[:10],
                                              freq='1d', fields=['close'])[0][0], prev_dates))
