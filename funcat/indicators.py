@@ -60,7 +60,7 @@ def MACD(SHORT=12, LONG=26, M=9):
     DEA = EMA(DIF, M)
     MACD = (DIF - DEA) * 2
 
-    return DIF, DEA, MACD
+    return MACD
 
 
 def RSI(N1=6, N2=12, N3=24):

@@ -94,6 +94,10 @@ class TushareDataBackend(DataBackend):
         trading_dates = [get_int_date(date) for date in df.date.tolist()]
         return trading_dates
 
+    @cached_property
+    def trading_dates(self):
+        return self.ts.get_trading_dates('1999-01-01', '2099-12-28')
+
     @lru_cache(maxsize=4096)
     def symbol(self, order_book_id):
         """获取order_book_id对应的名字
@@ -103,3 +107,29 @@ class TushareDataBackend(DataBackend):
         """
         code = self.convert_code(order_book_id)
         return "{}[{}]".format(order_book_id, self.code_name_map.get(code))
+
+    @lru_cache(maxsize=4096)
+    def get_index_component(self, order_book_id):
+        """
+        获取指数组成成分
+        :param order_book_id: 股票代码
+        :return: list of str
+        """
+        if order_book_id == '000300.XSHG':
+            code_list = list(self.ts.get_hs300s()['code'])
+        elif order_book_id == '000016.XSHG':
+            code_list = list(self.ts.get_sz50s()['code'])
+        elif order_book_id == '000905.XSHG':
+            code_list = list(self.ts.get_zz500s()['code'])
+        order_book_id_list = [code + ".XSHG" if code.startswith("6") else code + ".XSHE" for code in code_list]
+        return order_book_id_list
+
+    def get_previous_trading_date(self, date, n=1):
+        """
+
+        :param date: 需要查询的日期 str '20180601
+        :param n: 提前的天数
+        :return: 查询日期之前的第n个交易日
+        """
+        all_previous_trading_dates = self.trading_dates[self.trading_dates < int(date)]
+        return all_previous_trading_dates[-n]
