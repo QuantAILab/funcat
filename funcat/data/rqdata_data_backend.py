@@ -62,3 +62,13 @@ class RQDataBackend(DataBackend):
     @lru_cache(4096)
     def symbol(self, order_book_id):
         return "{}[{}]".format(order_book_id, self.rqdatac.instruments(order_book_id).symbol)
+
+    @lru_cache()
+    def get_index_component(self, order_book_id):
+        """
+        获取指数组成成分
+        :param order_book_id: 股票代码
+        :return: list of str
+        """
+        return self.rqdatac.index_components(order_book_id)
+

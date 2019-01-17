@@ -224,6 +224,10 @@ def ARMS(N=21, INDEX='000300.XSHG'):
     return ARMS
 
 def FSL():
+    """
+    若数据源为tushare，则只能拿到2016-08-09之后的流通股数，在此之前的流通股为np.nan
+    :return:
+    """
     SWL = (EMA(CLOSE, 5) * 7 + EMA(CLOSE, 10) * 3) / 10
     SWS = DMA(EMA(CLOSE, 12), MAX(1, 100 * (SUM(VOL, 5) / (3 * CAPITAL))))
 

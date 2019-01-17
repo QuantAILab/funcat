@@ -97,7 +97,7 @@ class TushareDataBackend(DataBackend):
 
     @cached_property
     def trading_dates(self):
-        return np.array(self.get_trading_dates('1999-01-01', '2099-12-28'))
+        return np.array(self.get_trading_dates('1990-01-01', '2099-12-28'))
 
     @lru_cache(maxsize=4096)
     def symbol(self, order_book_id):
@@ -157,6 +157,9 @@ class TushareDataBackend(DataBackend):
         code = self.convert_code(order_book_id)
         result_series = Series()
         for date in dates:
-            temp = self.ts.get_stock_basics(date)[col_name][code]
+            try:
+                temp = self.ts.get_stock_basics(date)[col_name][code]
+            except:
+                temp = np.nan
             result_series[date] = temp
         return result_series

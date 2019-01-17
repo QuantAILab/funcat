@@ -39,7 +39,7 @@ def get_financial_data(freq):
     start_date = ExecutionContext.get_start_date()
 
     datetime_array = data_backend.get_price(order_book_id, start=start_date, end=current_date,
-                                            freq=freq, fields=['datetime'])['datetime']
+                                            freq=freq)['datetime']
 
     try:
         order_dates = list(map(lambda x: str(x)[:8], datetime_array))
@@ -59,7 +59,7 @@ def get_financial_data(freq):
 def get_index_data(freq):
     data_backend = ExecutionContext.get_data_backend()
     order_book_id = ExecutionContext.get_current_security()
-    exchange = data_backend.instruments(order_book_id).exchange  # get the exchange where order_book_id is listed
+    exchange = order_book_id[-4:]  # get the exchange where order_book_id is listed
     if exchange == 'XSHG':
         index_id = '000001.XSHG'
     elif exchange == 'XSHE':
