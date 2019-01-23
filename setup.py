@@ -18,13 +18,13 @@ with open(join(dirname(__file__), 'funcat/VERSION.txt'), 'rb') as f:
     version = f.read().decode('ascii').strip()
 
 setup(
-    name='funcat',
+    name='rqfuncat',
     version=version,
     description='funcat',
     packages=find_packages(exclude=[]),
-    author='Hua Liang',
+    author='Hua Liang, Zirui Wei',
     url='https://github.com/cedricporter/funcat',
-    author_email='et@everet.org',
+    author_email='et@everet.org, ziruiwei@gmail.com',
     license='Apache License v2',
     package_data={'': ['*.*']},
     install_requires=[str(ir.req) for ir in parse_requirements("requirements.txt", session=False)],
