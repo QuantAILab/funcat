@@ -54,7 +54,7 @@ for name in ["capital"]:
     dtype = np.float64
     cls = type("{}Series".format(name.capitalize()), (FinancialDataSeries, ), {"name": name, "dtype": dtype})
     obj = cls(dynamic_update=True)
-    for var in [name[0], name[0].upper(), name.upper()]:
+    for var in [name.upper()]:
         globals()[var] = obj
 
 # define classes to get index data
