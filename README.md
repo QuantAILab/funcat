@@ -11,11 +11,13 @@ Funcat 将同花顺、通达信、文华财经等的公式移植到了 Python �
 苦于 Python 缺乏这种领域特定语言的表达能力，所以用 Python 基于 numpy 实现了一套。
 
 ## 安装
-```
-pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -U funcat
+
+```shell
+pip install git+https://github.com/QuantAILab/funcat.git
 ```
 
 ## notebooks 教程
+
 - [quick-start](https://github.com/cedricporter/funcat/blob/master/notebooks/funcat-tutorial.ipynb)
 
 ## API
@@ -30,61 +32,73 @@ pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -U funcat
 ### 工具函数
 
 - n天前的数据：`REF`
+
 ``` python
 REF(C, 10)  # 10天前的收盘价
 ```
 
 - 金叉判断：`CROSS`
+
 ``` python
 CROSS(MA(C, 5), MA(C, 10))  # 5日均线上穿10日均线
 ```
 
 - 两个序列取最小值：`MIN`
+
 ``` python
 MIN(O, C)  # K线实体的最低价
 ```
 
 - 两个序列取最大值：`MAX`
+
 ``` python
 MAX(O, C)  # K线实体的最高价
 ```
 
 - n天都满足条件：`EVERY`
+
 ``` python
 EVERY(C > MA(C, 5), 10)  # 最近10天收盘价都大于5日均线
 ```
 
 - n天内满足条件的天数：`COUNT`
+
 ``` python
 COUNT(C > O, 10)  # 最近10天收阳线的天数
 ```
 
 - n天内最大值：`HHV`
+
 ``` python
 HHV(MAX(O, C), 60)  # 最近60天K线实体的最高价
 ```
 
 - n天内最小值：`LLV`
+
 ``` python
 LLV(MIN(O, C), 60)  # 最近60天K线实体的最低价
 ```
 
 - 求和n日数据 `SUM`
+
 ``` python
 SUM(C, 10)  # 求和10天的收盘价
 ```
 
 - 求绝对值 `ABS`
+
 ``` python
 ABS(C - O)
 ```
 
 - 条件 `IF`
+
 ``` python
 IF(OPEN > CLOSE, OPEN, CLOSE)
 ```
 
 ### 条件「和」与「或」
+
 因为语法的问题，我们需要使用 `&` 代替 `and` 「和」，用 `|` 代替 `or` 「或」。
 
 ``` python
@@ -99,16 +113,17 @@ IF(OPEN > CLOSE, OPEN, CLOSE)
 ### 指标
 
 - 均线：`MA`
+
 ``` python
 MA(C, 60)  # 60日均线
 ```
 
 其他更多请见：[指标库](https://github.com/cedricporter/funcat/blob/master/funcat/indicators.py)
 
-
 还有更多的技术指标还在实现中，欢迎提交pr一起实现。
 
 ## 自定义公式示例
+
 [KDJ指标](http://wiki.mbalib.com/wiki/KDJ)。随机指标（KDJ）由 George C．Lane 创制。它综合了动量观念、强弱指标及移动平均线的优点，用来度量股价脱离价格正常范围的变异程度。
 
 ``` python
@@ -248,24 +263,3 @@ True
 >>> CROSS(MA(C, 10), MA(C, 20))
 False
 ```
-
-## DataBackend
-默认实现了一个从 tushare 上面实时拉数据选股的 Backend。
-
-还有一个 [RQAlpha](https://github.com/ricequant/rqalpha) 的 Backend，使用它可以为我们提供本地的数据源，比从 tushare 拉数据速度更有优势。
-
-``` bash
-pip install rqalpha    # 安装依赖库 RQAlpha
-rqalpha update_bundle  # 更新数据
-```
-
-替换 DataBackend 为 RQAlpha 的 DataProxy，这样可以从 RQAlpha 的 bundle 中获取数据。
-
-``` python
-from funcat.data.rqalpha_data_backend import RQAlphaDataBackend
-from funcat import *
-
-set_data_backend(RQAlphaDataBackend("~/.rqalpha/bundle"))
-```
-
-为了更高的性能，您也可以自定义Backend使用本地数据。这样可以极大地提高运行速度。

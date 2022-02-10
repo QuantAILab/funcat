@@ -18,7 +18,7 @@ with open(join(dirname(__file__), 'funcat/VERSION.txt'), 'rb') as f:
     version = f.read().decode('ascii').strip()
 
 setup(
-    name='rqfuncat',
+    name='funcat',
     version=version,
     description='funcat',
     packages=find_packages(exclude=[]),
@@ -33,7 +33,6 @@ setup(
         'Programming Language :: Python',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: Unix',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',

@@ -23,7 +23,7 @@
 0.0.17
 ==================
 
-- 增加 RQAlpha 的 DataBackend，可以从 RQAlpha 的 bundle 中获取数据。
+- 增加 QuantAI 的 DataBackend，可以从 QuantAI 的 bundle 中获取数据。
 
 
 0.0.16

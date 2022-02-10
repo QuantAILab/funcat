@@ -12,18 +12,18 @@ from .backend import DataBackend
 from ..utils import get_date_from_int, get_int_date
 
 
-class RQAlphaDataBackend(DataBackend):
+class QuantAIDataBackend(DataBackend):
     """
     目前仅支持日数据
     """
     skip_suspended = True
 
-    def __init__(self, bundle_path="~/.rqalpha/bundle"):
+    def __init__(self, bundle_path="~/.quantai/bundle"):
         try:
-            import rqalpha
+            import quantai
         except ImportError:
             print("-" * 50)
-            print("Run `pip install rqalpha` to install rqalpha first")
+            print("Run `pip install quantai` to install quantai first")
             print("-" * 50)
             raise
 
@@ -31,8 +31,8 @@ class RQAlphaDataBackend(DataBackend):
         # import warnings
         # warnings.simplefilter(action="ignore", category=FutureWarning)
 
-        from rqalpha.data.base_data_source import BaseDataSource
-        from rqalpha.data.data_proxy import DataProxy
+        from quantai.data.base_data_source import BaseDataSource
+        from quantai.data.data_proxy import DataProxy
 
         self.data_proxy = DataProxy(BaseDataSource(os.path.expanduser(bundle_path)))
 
@@ -72,10 +72,10 @@ class RQAlphaDataBackend(DataBackend):
         import pandas as pd
         insts = self.data_proxy.all_instruments("CS")
         if isinstance(insts, pd.DataFrame):
-            # for old version of RQAlpha
+            # for old version of QuantAI
             return sorted(insts.order_book_id.tolist())
         else:
-            # for new version fo RQAlpha
+            # for new version fo QuantAI
             return sorted([inst.order_book_id for inst in insts])
 
     def symbol(self, order_book_id):
