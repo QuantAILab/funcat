@@ -8,14 +8,11 @@ from setuptools import (
     setup,
 )
 
-try:
-    from pip._internal.req import parse_requirements
-except ImportError:
-    from pip.req import parse_requirements
-
-
 with open(join(dirname(__file__), 'funcat/VERSION.txt'), 'rb') as f:
     version = f.read().decode('ascii').strip()
+
+with open('requirements.txt', 'r') as f:
+    requirements = [l.strip('\n') for l in f.readlines()]
 
 setup(
     name='funcat',
@@ -27,7 +24,7 @@ setup(
     author_email='et@everet.org, ziruiwei@gmail.com',
     license='Apache License v2',
     package_data={'': ['*.*']},
-    install_requires=[str(ir.req) for ir in parse_requirements("requirements.txt", session=False)],
+    install_requires=requirements,
     zip_safe=False,
     classifiers=[
         'Programming Language :: Python',
